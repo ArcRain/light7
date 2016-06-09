@@ -3,7 +3,7 @@
 // Pages animations
 @pageDuration: 400ms;
 
-.page {
+.page, .page-group {
     box-sizing: border-box;
     position: absolute;
     left: 0;
@@ -12,15 +12,26 @@
     height: 100%;
     background: #efeff4;
     display: none;
+    overflow: hidden;
 
     &.page-current,
+    &.page-visible,
     &.page-from-center-to-left,
     &.page-from-center-to-right,
     &.page-from-right-to-center,
     &.page-from-left-to-center {
-      display: block;
+        display: block;
+    }
+
+    &.page-current {
+        overflow: hidden;
     }
 }
+
+.page-group {
+    display: block;
+}
+
 .page-left {
     opacity: 0.5;
     transform: translate3d(-20%);
