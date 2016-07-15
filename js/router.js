@@ -430,7 +430,7 @@
         }
 
         var $currentSection = this._getCurrentSection();
-        $currentSection.trigger(EVENTS.beforePageSwitch, [$currentSection.attr('id'), $currentSection]);
+        $currentSection.trigger(EVENTS.beforePageSwitch, [$currentSection.attr('id'), $currentSection, $visibleSection.attr('id'), $visibleSection, direction]);
 
         $allSection.removeClass(routerConfig.curPageClass);
         $visibleSection.addClass(routerConfig.curPageClass);
@@ -649,7 +649,7 @@
      */
     Router.prototype._animateSection = function ($from, $to, direction, noAnimation) {
         var toId = $to.attr('id');
-        $from.trigger(EVENTS.beforePageSwitch, [$from.attr('id'), $from]);
+        $from.trigger(EVENTS.beforePageSwitch, [$from.attr('id'), $from, $to.attr('id'), $to], direction);
 
         $from.removeClass(routerConfig.curPageClass);
         $to.addClass(routerConfig.curPageClass);
