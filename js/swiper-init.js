@@ -1,10 +1,6 @@
-/*===========================
-Framework7 Swiper Additions
-===========================*/
-/* global $:true */
 +function($){
     'use strict';
-    $.Swiper.prototype.defaults.pagination = '.swiper-pagination';
+    $.Swiper.prototype.defaults.pagination = '.page-current .swiper-pagination';
 
     $.swiper = function (container, params) {
         return new $.Swiper(container, params);
@@ -16,6 +12,13 @@ Framework7 Swiper Additions
         var page = $(pageContainer || document.body);
         var swipers = page.find('.swiper-container');
         if (swipers.length === 0) return;
+        function destroySwiperOnRemove(slider) {
+            function destroySwiper() {
+                slider.destroy();
+                page.off('pageBeforeRemove', destroySwiper);
+            }
+            page.on('pageBeforeRemove', destroySwiper);
+        }
         for (var i = 0; i < swipers.length; i++) {
             var swiper = swipers.eq(i);
             var params;
@@ -26,11 +29,12 @@ Framework7 Swiper Additions
             else {
                 params = swiper.dataset();
             }
-            $.swiper(swiper[0], params);
+            var _slider = $.swiper(swiper[0], params);
+            destroySwiperOnRemove(_slider);
         }
     };
     $.reinitSwiper = function (pageContainer) {
-        var page = $(pageContainer);
+        var page = $(pageContainer || '.page-current');
         var sliders = page.find('.swiper-container');
         if (sliders.length === 0) return;
         for (var i = 0; i < sliders.length; i++) {

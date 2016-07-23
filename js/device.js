@@ -100,5 +100,8 @@ Device/OS Detection
     // Add html classes
     if (classNames.length > 0) $('html').addClass(classNames.join(' '));
 
+    // keng..
+    device.isWeixin = /MicroMessenger/i.test(ua);
+
     $.device = device;
 })($);

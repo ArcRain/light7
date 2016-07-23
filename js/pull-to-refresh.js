@@ -115,6 +115,8 @@
             }
             container.transform('');
             if (refresh) {
+                //防止二次触发
+                if(container.hasClass('refreshing')) return;
                 container.addClass('refreshing');
                 container.trigger('refresh', {
                     done: function() {
@@ -143,6 +145,7 @@
 
     };
     $.pullToRefreshDone = function(container) {
+        $(window).scrollTop(0);//解决微信下拉刷新顶部消失的问题
         container = $(container);
         if (container.length === 0) container = $('.pull-to-refresh-content.refreshing');
         container.removeClass('refreshing').addClass('transitioning');

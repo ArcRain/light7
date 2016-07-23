@@ -31,10 +31,13 @@
     $(window).on("pageLoadStart", function() {
       $.showIndicator();
     });
-    $(document).on("pageAnimationStart", function() {
+    $(window).on("pageAnimationStart", function() {
       $.hideIndicator();
     });
     $(window).on("pageLoadCancel", function() {
+      $.hideIndicator();
+    });
+    $(window).on('pageLoadComplete', function() {
       $.hideIndicator();
     });
     $(window).on("pageLoadError", function() {
@@ -48,16 +51,17 @@
   $.init = function() {
     var $page = getPage();
     var id = $page[0].id;
-    $.initPage();
     if($page.hasClass("page-inited")) {
       $page.trigger("pageReinit", [id, $page]);
     } else {
+      $.initPage();
       $page.addClass("page-inited");
       $page.trigger("pageInit", [id, $page]);
     }
   };
 
   $(function() {
+    FastClick.attach(document.body);
     if($.smConfig.autoInit) {
       $.init();
     }
