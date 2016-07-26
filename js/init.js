@@ -51,10 +51,10 @@
   $.init = function() {
     var $page = getPage();
     var id = $page[0].id;
+    $.initPage();
     if($page.hasClass("page-inited")) {
       $page.trigger("pageReinit", [id, $page]);
     } else {
-      $.initPage();
       $page.addClass("page-inited");
       $page.trigger("pageInit", [id, $page]);
     }

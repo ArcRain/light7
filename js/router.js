@@ -273,19 +273,27 @@
      * @param {String} url url
      * @param {Boolean=} ignoreCache 是否强制请求不使用缓存，对 document 生效，默认是 false
      */
-    Router.prototype.load = function (url, ignoreCache, noAnimation) {
+    Router.prototype.load = function (url, ignoreCache, noAnimation, isBack) {
         if (ignoreCache === undefined) {
             ignoreCache = false;
         }
         if (noAnimation === undefined) {
             noAnimation = false;
         }
+        if (isBack === undefined) {
+            isBack = false;
+        }
 
         if (this._isTheSameDocument(location.href, url)) {
             this._switchToSection(Util.getUrlFragment(url), noAnimation);
         } else {
             this._saveDocumentIntoCache($(document), location.href);
-            this._switchToDocument(url, ignoreCache, true, DIRECTION.rightToLeft, noAnimation);
+            if (isBack) {
+                this._switchToDocument(url, ignoreCache, true, DIRECTION.leftToRight, noAnimation);
+            }
+            else {
+                this._switchToDocument(url, ignoreCache, true, DIRECTION.rightToLeft, noAnimation);
+            }
         }
     };
 
@@ -442,7 +450,14 @@
         this._animateDocument($currentDoc, $newDoc, $visibleSection, direction, noAnimation);
 
         if (isPushState) {
-            this._pushNewState(url, $visibleSection.attr('id'));
+            if (DIRECTION.leftToRight == direction) {
+                if (1 == theHistory.length) {
+                    this._replaceNewState(url, $visibleSection.attr('id'));
+                }
+            }
+            else {
+                this._pushNewState(url, $visibleSection.attr('id'));
+            }
         }
     };
 
@@ -613,7 +628,7 @@
         $visibleSectionInFrom.addClass(routerConfig.visiblePageClass).removeClass(routerConfig.curPageClass);
 
         $visibleSection.trigger(EVENTS.pageAnimationStart, [sectionId, $visibleSection]);
-        
+
         var fromHandler = function () {
             $visibleSectionInFrom.removeClass(routerConfig.visiblePageClass);
             // 移除 document 前后，发送 beforePageRemove 和 pageRemoved 事件
@@ -835,6 +850,27 @@
     };
 
     /**
+     * 页面替换到一个新状态
+     *
+     * 把新状态 replace 进去，设置为当前的状态，不更改 maxState。
+     *
+     * @param {String} url 新状态的 url
+     * @param {String} sectionId 新状态中显示的 section 元素的 id
+     * @private
+     */
+    Router.prototype._replaceNewState = function (url, sectionId) {
+        var currentState = theHistory.state;
+        var state = {
+            id: currentState.id,
+            pageId: sectionId,
+            url: Util.toUrlObject(url)
+        };
+
+        theHistory.replaceState(state, '', url);
+        this._saveAsCurrentState(state);
+    };
+
+    /**
      * 生成一个随机的 id
      *
      * @returns {string}
@@ -952,18 +988,17 @@
 
             e.preventDefault();
 
-            if ($target.hasClass('back')) {
+            var isBack = $target.hasClass('back');
+            if (isBack && (theHistory.length > 1)) {
                 router.back();
-            } else {
-                var url = $target.attr('href');
-                if (!url || url === '#') {
-                    return;
-                }
-
-                var ignoreCache = $target.attr('data-no-cache') === 'true';
-
-                router.load(url, ignoreCache, $target.hasClass("no-transition"));
+                return;
             }
+            var url = $target.attr('href');
+            if (!url || url === '#') {
+                return;
+            }
+            var ignoreCache = $target.attr('data-no-cache') === 'true';
+            router.load(url, ignoreCache, $target.hasClass("no-transition"), isBack);
         });
     });
 }($);
