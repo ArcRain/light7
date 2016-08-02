@@ -451,7 +451,7 @@
 
         if (isPushState) {
             if (DIRECTION.leftToRight == direction) {
-                if (1 == theHistory.length) {
+                if ((1 == theHistory.length) || (theHistory.state && theHistory.state.id == 1)) {
                     this._replaceNewState(url, $visibleSection.attr('id'));
                 }
             }
@@ -989,7 +989,7 @@
             e.preventDefault();
 
             var isBack = $target.hasClass('back');
-            if (isBack && (theHistory.length > 1)) {
+            if (isBack && (theHistory.state && theHistory.state.id != 1)) {
                 router.back();
                 return;
             }
