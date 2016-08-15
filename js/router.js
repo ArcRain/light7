@@ -438,7 +438,7 @@
         }
 
         var $currentSection = this._getCurrentSection();
-        $currentSection.trigger(EVENTS.beforePageSwitch, [$currentSection.attr('id'), $currentSection, $visibleSection.attr('id'), $visibleSection, direction]);
+        $currentSection.trigger(EVENTS.beforePageSwitch, [$currentSection.attr('id'), $currentSection, $visibleSection.attr('id'), $visibleSection, DIRECTION.leftToRight === direction]);
 
         $allSection.removeClass(routerConfig.curPageClass);
         $visibleSection.addClass(routerConfig.curPageClass);
@@ -451,9 +451,9 @@
 
         if (isPushState) {
             if (DIRECTION.leftToRight == direction) {
-                if ((1 == theHistory.length) || (theHistory.state && theHistory.state.id == 1)) {
+                //if ((1 == theHistory.length) || (theHistory.state && theHistory.state.id == 1)) {
                     this._replaceNewState(url, $visibleSection.attr('id'));
-                }
+                //}
             }
             else {
                 this._pushNewState(url, $visibleSection.attr('id'));
@@ -664,7 +664,7 @@
      */
     Router.prototype._animateSection = function ($from, $to, direction, noAnimation) {
         var toId = $to.attr('id');
-        $from.trigger(EVENTS.beforePageSwitch, [$from.attr('id'), $from, $to.attr('id'), $to], direction);
+        $from.trigger(EVENTS.beforePageSwitch, [$from.attr('id'), $from, $to.attr('id'), $to], DIRECTION.leftToRight === direction);
 
         $from.removeClass(routerConfig.curPageClass);
         $to.addClass(routerConfig.curPageClass);
