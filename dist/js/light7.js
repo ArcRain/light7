@@ -6125,7 +6125,14 @@ Device/OS Detection
     });
   }
 
-
+  $(window).on('pageInit pageReinit', function() {
+    $.hideIndicator();
+    $.lastPosition({
+      needMemoryClass: [
+        '.content'
+      ]
+    });
+  });
 
   $.init = function() {
     var $page = getPage().first();
