@@ -594,7 +594,7 @@ input.modal-text-input.modal-text-input-double+input.modal-text-input{margin-top
 .login-screen.modal-in,.popup.modal-in{-webkit-transform:translate3d(0,0,0);transform:translate3d(0,0,0)}
 .login-screen.modal-out,.popup.modal-out{-webkit-transform:translate3d(0,100%,0);transform:translate3d(0,100%,0)}
 .login-screen.modal-in,.login-screen.modal-out{display:block}
-html.with-statusbar-overlay .popup{top:1rem;height:-webkit-calc(100% -1rem);height:-webkit-calc(100% - 1rem);height:calc(100% - 1rem)}
+html.with-statusbar-overlay .popup{top:1rem;height:-webkit-calc(100% - 1rem);height:calc(100% - 1rem)}
 html.with-statusbar-overlay .popup-overlay{z-index:9800}
 @media all and (max-width:629px),(max-height:629px){html.with-statusbar-overlay .popup{top:1rem;height:-webkit-calc(100% - 1rem);height:calc(100% - 1rem)}
 html.with-statusbar-overlay .popup-overlay{z-index:9800}

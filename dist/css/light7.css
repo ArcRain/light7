@@ -3510,7 +3510,6 @@ input.modal-text-input.modal-text-input-double + input.modal-text-input {
 }
 html.with-statusbar-overlay .popup {
   top: 1rem;
-  height: -webkit-calc(100% -1rem);
   height: -webkit-calc(100% - 1rem);
   height:         calc(100% - 1rem);
 }

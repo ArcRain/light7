@@ -3187,7 +3187,11 @@ Device/OS Detection
       // Input Events
       function openOnInput(e) {
           e.preventDefault();
-          if (p.opened) return;
+          //如果已经打开,则关闭
+          if (p.opened) {
+              p.close();
+              return;
+          }
           p.open();
           if (p.params.scrollToInput && !isPopover()) {
               var pageContent = p.input.parents('.page-content');
@@ -4423,7 +4427,7 @@ Device/OS Detection
         if (infiniteContent.length === 0) return;
         $.attachInfiniteScroll(infiniteContent);
         //如果是顶部无限刷新，要将滚动条初始化于最下端
-        pageContainer.forEach(function(v){
+        pageContainer.each(function(v){
             if($(v).hasClass('infinite-scroll-top')){
                 var height = v.scrollHeight - v.clientHeight;
                 $(v).scrollTop(height);

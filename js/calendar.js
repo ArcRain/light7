@@ -625,7 +625,11 @@
       // Input Events
       function openOnInput(e) {
           e.preventDefault();
-          if (p.opened) return;
+          //如果已经打开,则关闭
+          if (p.opened) {
+              p.close();
+              return;
+          }
           p.open();
           if (p.params.scrollToInput && !isPopover()) {
               var pageContent = p.input.parents('.page-content');
