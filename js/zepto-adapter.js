@@ -148,6 +148,7 @@
             return dataset;
         } else return undefined;
     };
+    /*
     $.fn.data = function(key, value) {
         if (typeof value === 'undefined') {
             // Get value
@@ -176,6 +177,7 @@
             return this;
         }
     };
+    */
     $.fn.animationEnd = function(callback) {
         var events = ['webkitAnimationEnd', 'OAnimationEnd', 'MSAnimationEnd', 'animationend'],
             i, dom = this;
@@ -238,7 +240,7 @@
       }
       return $(nextEls);
     };
-
+    /*
     //重置zepto的show方法，防止有些人引用的版本中 show 方法操作 opacity 属性影响动画执行
     $.fn.show = function(){
       var elementDisplay = {};
@@ -261,7 +263,7 @@
           this.style.display = defaultDisplay(this.nodeName);
       });
     };
-
+    */
     $.fn.scrollHeight = function() {
       return this[0].scrollHeight;
     };
