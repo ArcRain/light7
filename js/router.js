@@ -990,8 +990,10 @@
 
             var isBack = $target.hasClass('back');
             if (isBack && (theHistory.state && theHistory.state.id != 1)) {
-                router.back();
-                return;
+                if (!Boolean($target.attr('data-fixed-href'))) {
+                    router.back();
+                    return;
+                }
             }
             var url = $target.attr('href');
             if (!url || url === '#') {
