@@ -4491,6 +4491,84 @@ Device/OS Detection
     };
 }($); 
 
+/*===============================================================================
+************   Accordion   ************
+===============================================================================*/
+/* global $:true */
++function ($) {
+  "use strict";
+
+$.accordionToggle = function (item) {
+    item = $(item);
+    if (item.length === 0) return;
+    if (item.hasClass('accordion-item-expanded')) $.accordionClose(item);
+    else $.accordionOpen(item);
+};
+$.accordionOpen = function (item) {
+    item = $(item);
+    var list = item.parents('.accordion-list').eq(0);
+    var content = item.children('.accordion-item-content');
+    if (content.length === 0) content = item.find('.accordion-item-content');
+    var expandedItem = list.length > 0 && item.parent().children('.accordion-item-expanded');
+    if (expandedItem.length > 0) {
+        $.accordionClose(expandedItem);
+    }
+    content.css('height', content[0].scrollHeight + 'px').transitionEnd(function () {
+        if (item.hasClass('accordion-item-expanded')) {
+            //content.transition(0);
+            //content.css('height', 'auto');
+            //var clientLeft = content[0].clientLeft;
+            //content.transition('');
+            item.trigger('opened');
+        }
+        else {
+            content.css('height', '');
+            item.trigger('closed');
+        }
+    });
+    item.trigger('open');
+    item.addClass('accordion-item-expanded');
+};
+$.accordionClose = function (item) {
+    item = $(item);
+    var content = item.children('.accordion-item-content');
+    if (content.length === 0) content = item.find('.accordion-item-content');
+    item.removeClass('accordion-item-expanded');
+    //content.transition(0);
+    content.css('height', content[0].scrollHeight + 'px');
+    // Relayout
+    //var clientLeft = content[0].clientLeft;
+    // Close
+    //content.transition('');
+    content.css('height', '').transitionEnd(function () {
+        if (item.hasClass('accordion-item-expanded')) {
+            //content.transition(0);
+            //content.css('height', 'auto');
+            //var clientLeft = content[0].clientLeft;
+            //content.transition('');
+            item.trigger('opened');
+        }
+        else {
+            content.css('height', '');
+            item.trigger('closed');
+        }
+    });
+    item.trigger('close');
+};
+
+$(document).on("click", ".accordion-item .item-content, .accordion-item-toggle", function(e) {
+    e.preventDefault();
+    var clicked = $(this);
+    // Accordion
+    if (clicked.hasClass('accordion-item-toggle') || (clicked.hasClass('item-link') && clicked.parent().hasClass('accordion-item'))) {
+        var accordionItem = clicked.parent('.accordion-item');
+        if (accordionItem.length === 0) accordionItem = clicked.parents('.accordion-item');
+        if (accordionItem.length === 0) accordionItem = clicked.parents('li');
+        $.accordionToggle(accordionItem);
+    }
+});
+}($);
+
 /* ===============================================================================
 ************   Notification ************
 =============================================================================== */
@@ -4822,6 +4900,150 @@ Device/OS Detection
         // Destroy on page remove
         function pageBeforeRemove() {
             m.destroy();
+            pageContainer.off('pageBeforeRemove', pageBeforeRemove);
+        }
+
+        if (pageContainer.hasClass('page')) {
+            pageContainer.on('pageBeforeRemove', pageBeforeRemove);
+        }
+    };
+}($);
+/*======================================================
+ ************   Messagebar   ************
+ ======================================================*/
++function ($) {
+    "use strict";
+    var Messagebar = function (container, params) {
+        var defaults = {
+            textarea: null,
+            maxHeight: null
+        };
+        params = params || {};
+        for (var def in defaults) {
+            if (typeof params[def] === 'undefined' || params[def] === null) {
+                params[def] = defaults[def];
+            }
+        }
+
+        // Instance
+        var m = this;
+
+        // Params
+        m.params = params;
+
+        // Container
+        m.container = $(container);
+        if (m.container.length === 0) return;
+
+        // Textarea
+        m.textarea = m.params.textarea ? $(m.params.textarea) : m.container.find('textarea');
+
+        // Is In Page
+        m.pageContainer = m.container.parents('.page').eq(0);
+        m.pageContent = m.pageContainer.find('.content');
+
+        // Initial Sizes
+        m.pageContentPadding = parseInt(m.pageContent.css('padding-bottom'));
+        m.initialBarHeight = m.container[0].offsetHeight;
+        m.initialAreaHeight = m.textarea[0].offsetHeight;
+
+
+        // Resize textarea
+        m.sizeTextarea = function () {
+            // Reset
+            m.textarea.css({'height': ''});
+
+            var height = m.textarea[0].offsetHeight;
+            var diff = height - m.textarea[0].clientHeight;
+            var scrollHeight = m.textarea[0].scrollHeight;
+
+            // Update
+            if (scrollHeight + diff > height) {
+                var newAreaHeight = scrollHeight + diff;
+                var newBarHeight = m.initialBarHeight + (newAreaHeight - m.initialAreaHeight);
+                var maxBarHeight = m.params.maxHeight || m.container.parents('.page')[0].offsetHeight - 88;
+                if (newBarHeight > maxBarHeight) {
+                    newBarHeight = parseInt(maxBarHeight, 10);
+                    newAreaHeight = newBarHeight - m.initialBarHeight + m.initialAreaHeight;
+                }
+                m.textarea.css('height', newAreaHeight + 'px');
+                m.container.css('height', newBarHeight + 'px');
+                var onBottom = (m.pageContent[0].scrollTop === m.pageContent[0].scrollHeight - m.pageContent[0].offsetHeight);
+                if (m.pageContent.length > 0) {
+                    m.pageContent.css('margin-bottom', newBarHeight + 'px');
+                    if (m.pageContent.find('.messages-new-first').length === 0 && onBottom) {
+                        m.pageContent.scrollTop(m.pageContent[0].scrollHeight - m.pageContent[0].offsetHeight);
+                    }
+                }
+            }
+            else {
+                if (m.pageContent.length > 0) {
+                    m.container.css({'height': '', 'bottom': ''});
+                    m.pageContent.css({'padding-bottom': ''});
+                }
+            }
+        };
+
+        // Clear
+        m.clear = function () {
+            m.textarea.val('').trigger('change');
+        };
+        m.value = function (value) {
+            if (typeof value === 'undefined') return m.textarea.val();
+            else m.textarea.val(value).trigger('change');
+        };
+
+        // Handle textarea
+        m.textareaTimeout = undefined;
+        m.handleTextarea = function (e) {
+            clearTimeout(m.textareaTimeout);
+            m.textareaTimeout = setTimeout(function () {
+                m.sizeTextarea();
+            }, 0);
+        };
+
+        //Events
+        function preventSubmit(e) {
+            e.preventDefault();
+        }
+
+        m.attachEvents = function (destroy) {
+            var method = destroy ? 'off' : 'on';
+            m.container[method]('submit', preventSubmit);
+            m.textarea[method]('change keydown keypress keyup paste cut', m.handleTextarea);
+        };
+        m.detachEvents = function () {
+            m.attachEvents(true);
+        };
+
+        // Init Destroy
+        m.init = function () {
+            m.attachEvents();
+        };
+        m.destroy = function () {
+            m.detachEvents();
+            m = null;
+        };
+
+        // Init
+        m.init();
+
+        m.container[0].f7Messagebar = m;
+        return m;
+    };
+    $.messagebar = function (container, params) {
+        return new Messagebar(container, params);
+    };
+    $.initPageMessagebar = function (pageContainer) {
+        pageContainer = $(pageContainer);
+        var messagebar = pageContainer.hasClass('messagebar') ? pageContainer : pageContainer.find('.messagebar');
+        if (messagebar.length === 0) return;
+        if (!messagebar.hasClass('messagebar-init')) return;
+        var mb = $.messagebar(messagebar, messagebar.dataset());
+
+        // Destroy on page remove
+        function pageBeforeRemove() {
+            mb.destroy();
             pageContainer.off('pageBeforeRemove', pageBeforeRemove);
         }
 
