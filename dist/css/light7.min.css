@@ -751,7 +751,7 @@ html.ios-gt-8 .messages-date{font-weight:600}
 .message .message-text{min-width:48px;min-height:35px;-moz-box-sizing:border-box;box-sizing:border-box;padding:6px 16px 9px;font-size:17px;line-height:1.2;word-break:break-word;border-radius:16px}
 .message.message-pic .message-text{padding:0;background:0 0}
 .message.message-pic img{display:block;max-width:100%;height:auto;border-radius:16px}
-.message-name{margin-top:7px;margin-bottom:2px;font-size:12px;line-height:1;color:#8e8e93}
+.message-name{margin-top:7px;margin-bottom:2px;font-size:.7rem;line-height:1;color:#8e8e93}
 .message-hide-name .message-name{display:none}
 .message-label{margin-top:4px;font-size:12px;line-height:1;color:#8e8e93}
 .message-hide-label .message-label{display:none}

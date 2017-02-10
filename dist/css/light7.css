@@ -4518,7 +4518,7 @@ html.ios-gt-8 .messages-date {
 .message-name {
   margin-top: 7px;
   margin-bottom: 2px;
-  font-size: 12px;
+  font-size: .7rem;
   line-height: 1;
   color: #8e8e93;
 }
